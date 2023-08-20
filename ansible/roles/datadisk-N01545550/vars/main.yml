@@ -1,0 +1,22 @@
+---
+disk_details:
+  - device: sdc
+    partition_num: 1
+    filesys_type: xfs
+    partition_start: 0%
+    partition_end: 4GiB
+
+  - device: sdc
+    partition_num: 2
+    filesys_type: ext4
+    partition_start: 4GiB
+    partition_end: 9GiB
+
+mount_details:
+  - mount_point: /part1
+    device_src: /dev/sdc1
+    filesystem_type: xfs
+
+  - mount_point: /part2
+    device_src: /dev/sdc2
+    filesystem_type: ext4

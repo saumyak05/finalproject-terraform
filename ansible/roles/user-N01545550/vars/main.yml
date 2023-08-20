@@ -1,0 +1,11 @@
+---
+group_details:
+  name: cloudadmins
+
+user_definitions:
+  - name: user100
+    groups: ['cloudadmins', 'wheel']
+  - name: user200
+    groups: ['cloudadmins', 'wheel']
+  - name: user300
+    groups: ['cloudadmins', 'wheel']

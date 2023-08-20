@@ -1,0 +1,15 @@
+---
+- name: Main playbook to manage data disks, user profiles, and webserver
+  hosts: linux
+  gather_facts: true
+  pre_tasks:
+    - debug:
+        msg: "Pre-task: Starting roles execution."
+  roles:
+    - datadisk-N01545550
+    - profile-N01545550
+    - user-N01545550
+    - webserver-N01545550
+  post_tasks:
+    - debug:
+        msg: "Post-task: Roles execution completed successfully."

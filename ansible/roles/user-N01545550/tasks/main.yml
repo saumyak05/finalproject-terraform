@@ -1,0 +1,29 @@
+---
+- block:
+    - name: Establishing the specified group
+      group:
+        name: "{{ group_details.name }}"
+        state: present
+
+    - name: Generating users and adding them to the appropriate groups
+      user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+        append: true
+        state: present
+      loop: "{{ user_definitions }}"
+
+    - name: Creating SSH keys for the specified users
+      openssh_keypair:
+        path: "~/.ssh/{{ item.name }}_id_rsa"
+        comment: "Key created for user {{ item.name }}"
+      loop: "{{ user_definitions }}"
+      become: false
+      delegate_to: localhost
+
+    - name: Deploying SSH keys to user profiles
+      authorized_key:
+        user: "{{ item[0].name }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/{{ item[1].name }}_id_rsa.pub') }}"
+      loop: "{{ user_definitions | product(user_definitions) | list }}"

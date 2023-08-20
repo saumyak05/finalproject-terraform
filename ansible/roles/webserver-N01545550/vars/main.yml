@@ -1,0 +1,6 @@
+---
+apache_service:
+  - httpd
+web_content:
+  dest_path: /var/www/html/index.html
+  permissions: 444

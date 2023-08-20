@@ -1,0 +1,58 @@
+---
+- block:
+
+    - name: Partition for datadisk-N01545550
+      parted:
+        device: "/dev/{{ item.device }}"
+        number: "{{ item.partition_num }}"
+        fs_type: "{{ item.filesys_type }}"
+        part_start: "{{ item.partition_start }}"
+        part_end: "{{ item.partition_end }}"
+        state: present
+      loop: "{{ disk_details }}"
+
+    - name: Create Filesystem for datadisk-N01545550
+      filesystem:
+        fstype: "{{ item.filesystem_type }}"
+        dev: "{{ item.device_src }}"
+      loop: "{{ mount_details }}"
+
+    - name: Mount datadisk-N01545550 including fstab configuration
+      mount:
+        path: "{{ item.mount_point }}"
+        src: "{{ item.device_src }}"
+        fstype: "{{ item.filesystem_type }}"
+        state: mounted
+        backup: true
+      loop: "{{ mount_details }}"
+
+  rescue:
+    - name: Clean and reset partitions if failure
+      parted:
+        device: "/dev/{{ item.device }}"
+        number: "{{ item.partition_num }}"
+        fs_type: "{{ item.filesys_type }}"
+        part_start: "{{ item.partition_start }}"
+        part_end: "{{ item.partition_end }}"
+        state: absent
+      loop: "{{ disk_details }}"
+
+  always:
+    - name: Validate Fstab
+      command: cat /etc/fstab
+      register: outputfstab
+
+    - name: Validate Device
+      command: df -Th
+      register: outputdf
+
+    - name: Validate Block
+      command: lsblk
+      register: outputlsblk
+
+    - name: Getting output
+      debug:
+        msg:
+          - "{{ outputfstab.stdout_lines }}"
+          - "{{ outputdf.stdout_lines }}"
+          - "{{ outputlsblk.stdout_lines }}"

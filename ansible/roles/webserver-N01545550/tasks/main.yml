@@ -1,0 +1,41 @@
+---
+- block:
+    - name: Install the Apache web server
+      yum:
+        name: "{{ apache_service }}"
+        state: present
+      notify:
+        - restart_apache
+      when: ansible_distribution == "CentOS"
+
+    - name: Create HTML files for each host
+      file:
+        path: "roles/webserver-N01545550/files/{{ ansible_facts['hostname'] }}.html"
+        state: touch
+      delegate_to: localhost
+      become: false
+
+    - name: Add hostname information to HTML files
+      lineinfile:
+        path: "roles/webserver-N01545550/files/{{ ansible_facts['hostname'] }}.html"
+        insertafter: EOF
+        state: present
+        line: "Welcome to {{ ansible_facts['hostname'] }} - Managed by Ansible"
+      delegate_to: localhost
+      become: false
+
+    - name: Deploy HTML files to web directory
+      copy:
+        src: "roles/webserver-N01545550/files/{{ ansible_facts['hostname'] }}.html"
+        dest: "{{ web_content.dest_path }}"
+        mode: "{{ web_content.permissions }}"
+
+  always:
+    - name: Verify index file content
+      command: "cat {{ web_content.dest_path }}"
+      register: index_result
+
+    - name: Debugging index content
+      debug:
+        msg:
+          - "{{ index_result.stdout_lines }}"

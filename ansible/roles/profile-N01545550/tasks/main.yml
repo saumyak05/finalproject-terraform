@@ -1,0 +1,19 @@
+---
+- block:
+    - name: Appending configuration block to the specified file
+      blockinfile:
+        path: "{{ config_file['file_path'] }}"
+        block: "{{ config_file['content_block'] }}"
+        insertafter: EOF
+        backup: yes
+        state: present
+
+  always:
+    - name: Verification of appended content in the file
+      command: "cat {{ config_file['file_path'] }}"
+      register: verification_result
+
+    - name: Debug information of file content
+      debug:
+        msg:
+          "{{ verification_result.stdout_lines }}"

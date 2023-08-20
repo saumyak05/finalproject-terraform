@@ -1,0 +1,6 @@
+---
+config_file:
+  file_path: /etc/profile
+  content_block: |
+    #Test block added by Ansible......{{ ansible_user_id }}
+    export TMOUT=1500
