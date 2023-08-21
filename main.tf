@@ -45,7 +45,7 @@ module "loadbalancer-N01545550" {
   loc                    = module.rgroup-N01545550.rg_location
   res_grp_name           = module.rgroup-N01545550.res_grp_name
   pub_ip                 = "loadbalancer-n01545550-pub-ip"
-  lb_name                = "saumya-loadbalancer"
+  lb_name                = "5550loadbalancer"
   pool_name              = "lb-pool"
   linux_machine_nic_id   = module.vmlinux-N01545550.linux_machine_nic_id
   linux_machine_ipconfig = module.vmlinux-N01545550.linux_machine_ipconfig
